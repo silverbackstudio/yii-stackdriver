@@ -1,0 +1,14 @@
+{
+    "name": "silverback/yii-google-cloud-error-reporting",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Brando Meniconi",
+            "email": "b.meniconi@silverbackstudio.it"
+        }
+    ],
+    "require": {
+        "google/cloud-logging": "^1.12",
+        "google/cloud-error-reporting": "^0.11.0"
+    }
+}
