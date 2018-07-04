@@ -14,6 +14,7 @@ class StackdriverErrorHandler extends CErrorHandler
     public $logName = 'application-log';
     public $serviceName = 'application';
     public $serviceVersion = '1.0';
+    public $skip404 = false;
     
     protected $metadataProvider = null;
     protected $psrLogger = null;
@@ -38,7 +39,6 @@ class StackdriverErrorHandler extends CErrorHandler
         ]);
         
         Google\Cloud\ErrorReporting\Bootstrap::init( $this->psrLogger );
-
     }    
     
 	/**
@@ -46,8 +46,10 @@ class StackdriverErrorHandler extends CErrorHandler
 	 */
 	protected function handleException($exception)
 	{
-        
-        Google\Cloud\ErrorReporting\Bootstrap::exceptionHandler( $exception ); 
+        // Skip 404 errors, mostly triggered by bots
+        if ( ! $this->skip404 || ! ($exception instanceof CHttpException) || (404 !== $exception->statusCode) ) {
+            Google\Cloud\ErrorReporting\Bootstrap::exceptionHandler( $exception );    
+        } 
 
         parent::handleException( $exception );
 	}
@@ -57,9 +59,10 @@ class StackdriverErrorHandler extends CErrorHandler
 	 */
 	protected function handleError( $event )
 	{
-        
+	    
         Google\Cloud\ErrorReporting\Bootstrap::errorHandler( $event->code, $event->message, $event->file, $event->line ); 
 
         parent::handleError( $event );
 	}	
+
 }

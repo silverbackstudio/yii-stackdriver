@@ -15,6 +15,8 @@ class StackdriverLogRoute extends CEmailLogRoute
     protected $metadataProvider = null;
     protected $psrLogger = null;
     
+    public $errorSeverity = array();
+    
     /**
      * @inheritdoc
      */
@@ -44,10 +46,15 @@ class StackdriverLogRoute extends CEmailLogRoute
 	    
 		foreach($logs as $log) {
 		    
-		    $context = array( 
-		        'category' => $log[2]
-		    );
+		    $message = $log[0];
+		    $level = $log[1];
+		    $category = $log[2];
+		    $time = $log[3];
 		    
+		    $context = array( 
+		        'category' => $category
+		    );
+		   
             $app = Yii::app();
             
             if($app instanceof CWebApplication) {
@@ -57,7 +64,11 @@ class StackdriverLogRoute extends CEmailLogRoute
     		    );
             }
 		    
-			$this->psrLogger->log( $log[1], $this->formatLogMessage($log[0],$log[1],$log[2],$log[3]), $context );
+		    if ( array_key_exists( $category, $this->errorSeverity ) ) {
+		        $level = $this->errorSeverity[$category];
+		    }
+		
+			$this->psrLogger->log( $level, $message, $context );
 		}
 
 	}
