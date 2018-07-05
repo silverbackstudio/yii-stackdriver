@@ -16,9 +16,14 @@ Add the log route to CLogRouter to pipe logs in Google Cloud Logging.
 	'class'=>'CLogRouter',
 	'routes'=>array(
 		array(
-            'class'=>'ext.yii-stackdriver.StackdriverLogRoute',
-            'levels'=>'error, warning, info, profile, debug',
-		),		
+			'class'=>'ext.yii-stackdriver.StackdriverLogRoute',
+			'levels'=>'error, warning, info, profile, debug',
+			
+			// override error severity for some exceptions
+			'errorSeverity' => array(
+				'exception.CHttpException.404' => 'info',
+			)
+		),
 		...
 	)
 )
@@ -27,11 +32,14 @@ Add the log route to CLogRouter to pipe logs in Google Cloud Logging.
 
 Customize the class for error handling in config.
 
-```
+```php
 'errorHandler'=>array(
 	// use 'site/error' action to display errors
 	'class'=>'ext.yii-stackdriver.StackdriverErrorHandler',
 	'errorAction'=>'site/error',
+	
+	// do not consider 404 as errors/exceptions
+	'skip404' => true,
 ),
 ```
 
