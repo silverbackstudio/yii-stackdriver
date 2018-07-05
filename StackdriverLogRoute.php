@@ -61,6 +61,9 @@ class StackdriverLogRoute extends CEmailLogRoute
     		    $context['httpRequest'] = array(
     		        'requestUrl' => $app->request->url,
     		        'requestMethod' => $app->request->requestType,
+    		        'referer' => $app->request->urlReferrer,
+    		        'userAgent' => $app->request->userAgent,
+    		        'remoteIp' => $app->request->userHostAddress
     		    );
             }
 		    
